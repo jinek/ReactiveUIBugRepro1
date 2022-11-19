@@ -8,7 +8,6 @@ Type interfaceProxyTypeWithTarget = defaultProxyBuilder.CreateInterfaceProxyType
 INestedObject nestedObject = (INestedObject)Activator.CreateInstance(interfaceProxyTypeWithTarget,
     Array.Empty<IInterceptor>(),
     new NestedObject()); // replace this with new NestedObject() to see it's working fine
-
 var parentObject = new ParentObject();
 
 nestedObject.Input = "1"; // reported, all fine
@@ -17,7 +16,7 @@ nestedObject.Input = "2"; // todo: not reported
 nestedObject.Input = "3"; // todo: not reported
 nestedObject.Input = "4"; // todo: sometimes reported probably due disposing
 
-public interface INestedObject
+public interface INestedObject : IReactiveObject
 {
     string Input { get; set; }
 }
@@ -36,6 +35,9 @@ class ParentObject : ReactiveObject
         this.WhenAnyValue(parent => parent.NestedObject,
                 parent => parent.NestedObject.Input,
                 (parent, _) => parent?.Input)
-            .Subscribe(str => { Console.WriteLine(str); });
+            .Subscribe(str =>
+            {
+                Console.WriteLine(str);
+            });
     }
 }
